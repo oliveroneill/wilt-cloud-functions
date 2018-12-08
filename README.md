@@ -7,4 +7,4 @@ Unfortunately this is still using AWS Lambda, but it will populate the BigQuery
 table as needed.
 
 ## Functions
-- [playsPerArtist](https://github.com/oliveroneill/wilt-cloud-functions/blob/master/playsPerArtist/README.md)
+- [playsPerArtist](https://github.com/oliveroneill/wilt-cloud-functions/tree/master/playsPerArtist)
