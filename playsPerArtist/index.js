@@ -1,6 +1,6 @@
 const escapeHtml = require('escape-html');
 const {BigQuery} = require('@google-cloud/bigquery');
-const {projectId, location} = require('./constants');
+const {projectId, bigQueryLocation} = require('./constants');
 
 /**
  * Responds to an HTTP request using data from the request body parsed according
