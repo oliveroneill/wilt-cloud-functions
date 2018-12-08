@@ -3,9 +3,11 @@
 Get plays per artist, grouped by periods.
 
 ## Getting Started
-Create a `constants.js` file to store the Google Cloud Project ID. Like this:
+Create a `constants.js` file to store the Google Cloud Project ID and
+BigQuery location. Like this:
 ```javascript
 exports.projectId = 'ENTER-PROJECT-ID-HERE'
+exports.bigQueryLocation = 'ENTER-LOCATION-HERE'
 ```
 
 ## Format

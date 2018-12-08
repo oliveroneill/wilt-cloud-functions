@@ -1,6 +1,6 @@
 const escapeHtml = require('escape-html');
 const {BigQuery} = require('@google-cloud/bigquery');
-const {projectId} = require('./constants');
+const {projectId, location} = require('./constants');
 
 /**
  * Responds to an HTTP request using data from the request body parsed according
@@ -98,7 +98,7 @@ exports.playsPerArtist = (req, res) => {
 
   bigQuery.query({
     query: sqlQuery,
-    location: 'australia-southeast1',
+    location: bigQueryLocation,
   }).then(function ([rows]) {
     return res.status(200).send(rows);
   }).catch(function (error) {
