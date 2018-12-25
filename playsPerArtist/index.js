@@ -58,15 +58,17 @@ exports.playsPerArtist = (req, res) => {
   }
   const bigQuery = new BigQuery({ projectId: projectId });
   const sqlQuery = `
-  SELECT primary_artist, ARRAY_AGG(events) AS events FROM (
+  SELECT primary_artist, ARRAY_AGG(playdate) AS dates, ARRAY_AGG(events) AS events FROM (
     SELECT
       period,
+      playdate,
       primary_artist,
       SUM(count) AS events
     FROM (
       SELECT
         grouped.period,
         grouped.year,
+        grouped.playdate,
         grouped.primary_artist,
         IFNULL(count, 0) AS count
       FROM (
@@ -79,6 +81,7 @@ exports.playsPerArtist = (req, res) => {
         SELECT
           period_data.period,
           period_data.year,
+          period_data.playdate,
           primary_artist
         FROM (
           SELECT
@@ -87,13 +90,13 @@ exports.playsPerArtist = (req, res) => {
           WHERE user_id='${user}' AND UNIX_SECONDS(date) BETWEEN ${start} AND ${end}
         ) as history
         CROSS JOIN (
-          SELECT EXTRACT(${extract} FROM period) AS period, EXTRACT(YEAR FROM period) AS year
+          SELECT period AS playdate, EXTRACT(${extract} FROM period) AS period, EXTRACT(YEAR FROM period) AS year
           FROM UNNEST(
               GENERATE_DATE_ARRAY(DATE(TIMESTAMP_SECONDS(${start})), DATE(TIMESTAMP_SECONDS(${end})), INTERVAL 1 ${interval})
           ) AS period
         ) AS period_data
       ) AS grouped ON EXTRACT(${extract} FROM play_history.date) = grouped.period AND EXTRACT(YEAR FROM play_history.date) = grouped.year AND grouped.primary_artist = play_history.primary_artist
-    ) GROUP BY period, year, primary_artist ORDER BY period, year
+    ) GROUP BY period, year, playdate, primary_artist ORDER BY period, year
   ) GROUP BY primary_artist`;
 
   bigQuery.query({
