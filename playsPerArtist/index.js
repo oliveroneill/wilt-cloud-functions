@@ -61,7 +61,7 @@ exports.playsPerArtist = (req, res) => {
   SELECT primary_artist, ARRAY_AGG(playdate) AS dates, ARRAY_AGG(events) AS events FROM (
     SELECT
       period,
-      playdate,
+      FORMAT_DATE("%F", playdate) AS playdate,
       primary_artist,
       SUM(count) AS events
     FROM (
