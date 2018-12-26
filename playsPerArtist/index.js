@@ -87,12 +87,12 @@ exports.playsPerArtist = (req, res) => {
           SELECT
           DISTINCT primary_artist
           FROM wilt_play_history.play_history
-          WHERE user_id='${user}' AND UNIX_SECONDS(date) BETWEEN ${start} AND ${end}
+          WHERE user_id=@user AND UNIX_SECONDS(date) BETWEEN @start AND @end
         ) as history
         CROSS JOIN (
           SELECT period AS playdate, EXTRACT(${extract} FROM period) AS period, EXTRACT(YEAR FROM period) AS year
           FROM UNNEST(
-              GENERATE_DATE_ARRAY(DATE(TIMESTAMP_SECONDS(${start})), DATE(TIMESTAMP_SECONDS(${end})), INTERVAL 1 ${interval})
+              GENERATE_DATE_ARRAY(DATE(TIMESTAMP_SECONDS(@start)), DATE(TIMESTAMP_SECONDS(@end)), INTERVAL 1 ${interval})
           ) AS period
         ) AS period_data
       ) AS grouped ON EXTRACT(${extract} FROM play_history.date) = grouped.period AND EXTRACT(YEAR FROM play_history.date) = grouped.year AND grouped.primary_artist = play_history.primary_artist
@@ -102,6 +102,11 @@ exports.playsPerArtist = (req, res) => {
   bigQuery.query({
     query: sqlQuery,
     location: bigQueryLocation,
+    params: {
+      user: user,
+      start: start,
+      end: end,
+    },
   }).then(function ([rows]) {
     return res.status(200).send(rows);
   }).catch(function (error) {
